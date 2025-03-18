@@ -70,20 +70,21 @@ elif menu_option == "Remove a Book":
 # Search books
 elif menu_option == "Search Books":
     st.header("🔍 Search Books")
-    search_query = st.text_input("Enter title or author:", placeholder="Start typing to see suggestions...")
-    suggestions = [book["Title"] for book in library if search_query.lower() in book["Title"].lower()] + \
-                  [book["Author"] for book in library if search_query.lower() in book["Author"].lower()]
-    
+    search_query = st.text_input("Enter title or author:")
     if search_query:
         matches = [book for book in library if search_query.lower() in book["Title"].lower() or search_query.lower() in book["Author"].lower()]
         if matches:
-            st.write("### Suggested Matches:")
-            st.selectbox("Suggestions", options=suggestions, index=0 if suggestions else None)
-            for book in matches:
+              for book in matches:
+                 col1, col2 = st.columns([3, 1])
+              with col1:
                 st.write(f"**{book['Title']}** by {book['Author']} ({book['Year']}) - {'✅ Read' if book['Read'] else '❌ Unread'}")
+              with col2:
+                if not book['Read'] and st.button(f"Mark as Read", key=book['Title']):
+                    book['Read'] = True
+                    save_library(library)
+                    st.rerun()
         else:
             st.warning("No matches found.")
-
 # Display all books
 elif menu_option == "Display All Books":
     st.header("📖 All Books")
